@@ -1,3 +1,5 @@
+const EQUIPMEMT_DURABILITY_DECREASE_PERCENTAGE = 2;
+
 const equipmentTypes = {
   "common": "common", 
   "rare": "rare", 
@@ -32,8 +34,8 @@ class Creature {
     console.log("Moved ", this.speed, " unit.")
   }
 
-	attack(creature) {
-    creature.takeDamage(this.damage);
+	attack(target) {
+    target.takeDamage(this.damage);
   };
 
 	takeDamage(damage) {
@@ -61,6 +63,25 @@ class Player extends Creature {
     this.damage = this._totalDamage();
   }
 
+  takeDamage(damage) {
+    this.health -= damage;
+    if (!this._alive()) this._die();
+    if (this._hasSomePropertyByKey(this.equipments, 'defense')) {
+      this.equipments.forEach(equipment => {
+        if (equipment.defense) equipment.decreaseDurability();
+      });
+    }
+  }
+
+	attack(target) {
+    target.takeDamage(this.damage);
+    if (this._hasSomePropertyByKey(this.equipments, 'damage')) {
+      this.equipments.forEach(equipment => {
+        if (equipment.damage) equipment.decreaseDurability();
+      });
+    }
+  };
+
   _totalArmor() {
     let totalArmor = 0;
     this.equipments.forEach(equipment => {
@@ -70,7 +91,7 @@ class Player extends Creature {
   }
 
   _totalDamage() {
-    if (!this._hasDamageProperty(equipments)) return this.damage;
+    if (!this._hasSomePropertyByKey(equipments, 'damage')) return this.damage;
     let totalDamage = 0;
     this.equipments.forEach(equipment => {
       if (equipment.damage) totalDamage += equipment.damage;
@@ -86,8 +107,8 @@ class Player extends Creature {
     return totalHealth;
   }
 
-  _hasDamageProperty(equipments) {
-    return equipments.some(equipment => equipment.damage);
+  _hasSomePropertyByKey(equipments, key) {
+    return equipments.some(equipment => equipment[key]);
   }
 }
 
@@ -98,34 +119,41 @@ class Enemy extends Creature {
 }
 
 class Equipment {
-  constructor (name, price, type, slot, durability, requiredLevel, weight) {
+  constructor (className = 'equipment', name, price, type, slot, durability, requiredLevel, weight) {
+    this.className = className;
     this.name = name;
     this.price = price;
     this.type = equipmentTypes[type];
     this.slot = slotTypes[slot];
-    this.durability = durability; // Note: e.g. 20, should decrease when this Equipment in use.
+    this.initialDurability = durability;
+    this.currentDurability = durability; // Note: e.g. 20, should decrease when this Equipment in use.
     this.requiredLevel = requiredLevel;
     this.weight = weight;
+  }
+
+  decreaseDurability() {
+    if (this.className === 'accesory') return;
+    this.currentDurability -= (this.currentDurability * EQUIPMEMT_DURABILITY_DECREASE_PERCENTAGE) / 100
   }
 }
 
 class Armor extends Equipment {
   constructor (name, price, type, slot, durability, requiredLevel, weight, defense) {
-    super(name, price, type, slot, durability, requiredLevel, weight);
+    super('armor', name, price, type, slot, durability, requiredLevel, weight);
     this.defense = defense;
   }
 }
 
 class Weapon extends Equipment {
   constructor (name, price, type, slot, durability, requiredLevel, weight, damage) {
-    super(name, price, type, slot, durability, requiredLevel, weight);
+    super('weapon', name, price, type, slot, durability, requiredLevel, weight);
     this.damage = damage;
   }
 }
 
 class Accessory extends Equipment {
   constructor (name, price, type, slot, durability, requiredLevel, weight, health, damage, defense) {
-    super(name, price, type, slot, durability, requiredLevel, weight);
+    super('accessory', name, price, type, slot, durability, requiredLevel, weight);
     this.health = health;
     this.damage = damage;
     this.defense = defense;

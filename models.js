@@ -22,16 +22,21 @@ const slotTypes = { 
 }
 
 class Creature {
-  constructor (damage, health, speed, race) {
+  constructor (damage, health, speed, runRate, race) {
     this.id = 1; /* uuid */
     this.damage = damage;
     this.health = health;
     this.speed = speed;
+    this.runRate = runRate;
     this.race = race;
   }
 
-  move() {
-    console.log("Moved ", this.speed, " unit.")
+  walk() {
+    console.log("Walked ", this.speed, " unit.");
+  }
+
+  run() {
+    console.log("Ran ", this.speed * this.runRate, " unit.");
   }
 
 	attack(target) {
@@ -54,8 +59,8 @@ class Creature {
 }
 
 class Player extends Creature {
-  constructor (damage, health, speed, race, name, equipments) {
-    super(damage, health, speed, race);
+  constructor (damage, health, speed, runRate, race, name, equipments) {
+    super(damage, health, speed, runRate, race);
     this.name = name;
     this.equipments = equipments;
     this.health = this._totalHealth();
@@ -113,8 +118,8 @@ class Player extends Creature {
 }
 
 class Enemy extends Creature {
-  constructor (damage, health, speed, race) {
-    super(damage, health, speed, race);
+  constructor (damage, health, speed, runRate, race) {
+    super(damage, health, speed, runRate, race);
   }
 }
 
@@ -175,5 +180,5 @@ const equipments = [
   ring,
   belt,
 ];
-const player = new Player(5, 10, 3, "Human", "Fatih", equipments);
-const enemy = new Enemy(3, 300, 3, "Zombie");
+const player = new Player(5, 10, 3, 1.8, "Human", "Fatih", equipments);
+const enemy = new Enemy(3, 300, 3, 1.4, "Zombie");

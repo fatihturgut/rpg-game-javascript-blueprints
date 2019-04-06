@@ -1,4 +1,4 @@
-# Rpg Game Javascript Blueprint
+# Rpg Game Javascript Blueprints
 
 ### Setup
 

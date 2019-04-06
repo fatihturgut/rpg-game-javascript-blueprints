@@ -1,0 +1,22 @@
+{
+  "EQUIPMEMT_DURABILITY_DECREASE_PERCENTAGE": 2,
+  "EQUIPMENT_TYPES": {
+    "common": "common", 
+    "rare": "rare", 
+    "legendary": "legendary"
+  },
+  "SLOT_TYPES": {
+    "head": "head", 
+    "neck": "neck",
+    "shoulder": "shouler", 
+    "chest": "chest", 
+    "wrist": "wrist", 
+    "hands": "hands", 
+    "right_hand": "right_hand", 
+    "left_hand": "left_hand", 
+    "finger": "finger",
+    "belt": "belt", 
+    "legs": "legs",  
+    "feet": "feet"
+  }
+}
